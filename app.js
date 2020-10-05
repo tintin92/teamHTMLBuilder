@@ -26,9 +26,12 @@ function mainMenu() {
                 }
                 return "Please enter a name"
             }
-        }]).then(answer){
-
-        }
+        }]).then(answer =>{
+            const manager = new Manager(answers.id)
+            teamMembers.push(manager)
+            //used to validate if name has already been selected 
+            idArray.push(answers.managerId)
+        })
     }
     
     createManager()
