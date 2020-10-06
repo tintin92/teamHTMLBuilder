@@ -112,11 +112,11 @@ function mainMenu() {
         },
         {
             type: "input",
-            name: "engineergithub",
+            name: "engineerGithub",
             message: "What is your engineer's username on Github?"
         },
         ]).then(answer => {
-            const engineer = new Engineer(answer.engineerName, answer.engineerID, answer.engineerEmail, answer.engineergithub);
+            const engineer = new Engineer(answer.engineerName, answer.engineerID, answer.engineerEmail, answer.engineerGithub);
             teamMembers.push(engineer);
             idArray.push(answer.engineerID);
             nextTeamMember();
