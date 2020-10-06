@@ -18,7 +18,7 @@ function mainMenu() {
     createManager();
 
     function createManager() {
-        console.log("Please Build Your Team")
+        
         inquirer.prompt([
             {
                 type: "input",
@@ -112,8 +112,8 @@ function mainMenu() {
             type: "input",
             name: "engineerName",
             message: "What is your engineer's name?",
-            validate: answers => {
-                if (answers !== "") {
+            validate: answer => {
+                if (answer !== "") {
                     return true;
                 }
                 return ("Please enter a name")
@@ -129,30 +129,35 @@ function mainMenu() {
             name: "engineerGithub",
             message: "What is your engineer's username on Github?"
         },
-        ]).then(answer => {
-            const engineer = new Engineer(answer.engineerName, answer.engineerID, answer.engineerEmail, answer.engineerGithub);
+        ]).then(answers => {
+            const engineer = new Engineer(answers.engineerName, answers.engineerID, answers.engineerEmail, answers.engineerGithub);
             teamMembers.push(engineer);
-            idArray.push(answer.engineerID);
-            nextTeamMember();
+            idArray.push(answers.engineerID);
+            createTeam();
         })
     }
 
     function createIntern() {
-        console.log("Please describe your intern");
         inquirer.prompt([{
             type: "input",
             name: "internName",
-            message: "What's your intern's name?"
+            message: "What's your intern's name?",
+            validate: answer => {
+                if (answer !== "") {
+                    return true;
+                }
+                return ("Please enter a valid name")
+            }
         },
         {
             type: "input",
-            name: "internID",
-            message: "what is your intern's ID number?",
+            name: "internId",
+            message: "What is your intern's ID number?",
             validate: async answer => {
                 if (answer <= 0) {
                     return "Please enter a number for a intern ID.";
                 }
-                // return true
+                return true
             }
         },
         {
@@ -165,14 +170,14 @@ function mainMenu() {
             name: "internSchool",
             message: "What school does your intern attend?"
         }
-        ]).then(answer => {
-            const intern = new Intern(answer.internName, answer.internID, answer.internEmail, answer.internSchool);
+        ]).then(answers => {
+            const intern = new Intern(answers.internName, answers.internID, answers.internEmail, answers.internSchool);
             teamMembers.push(intern);
-            idArray.push(answer.internID);
-            nextTeamMember();
+            idArray.push(answers.internID);
+            createTeam();
         })
     }
-    createManager()
+
 }
 mainMenu()
 // Write code to use inquirer to gather information about the development team members,
