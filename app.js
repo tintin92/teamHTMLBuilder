@@ -26,6 +26,9 @@ function mainMenu() {
                 }
                 return "Please enter a name"
             }
+            type: "input",
+            name: "manager id",
+            message: ""
         }]).then(answer =>{
             const manager = new Manager(answers.id)
             teamMembers.push(manager)
