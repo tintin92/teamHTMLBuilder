@@ -21,22 +21,143 @@ function mainMenu() {
             name: "managerName",
             message: "What is your managers name?",
             validate: answer => {
-                if(answer !=="") {
+                if (answer !== "") {
+                    return true;
+                }
+                return "Please enter a name"
+
+            }
+        },
+            {
+
+            type: "input",
+            name: "managerID",
+            message: "What is your manager's ID number?",
+            validate: async answer => {
+                if (answer !=="") {
+                    return true;
+                }
+                return "Please enter a number for your manager's ID."
+            }
+        },
+        {
+            type: "input",
+            name: "managerEmail",
+            message: "What's your manager's email address?"
+        },
+        {
+            type: "input",
+            name: "managerOffice",
+            message: "What is your manager's office number?",
+            validate: async answer => {
+                if (answer !=="") {
+                    return true;
+                }
+                return "Please enter a number for your managers office."
+            }
+
+        },
+
+        ]).then(answer => {
+            const manager = new Manager(answer.managerName, answer.managerID, answer.managerEmail, answer.managerOffice);
+
+            teamMembers.push(manager);
+            //used to validate if name has already been selected 
+            idArray.push(answers.managerID);
+            nextTeamMember();
+        })
+
+        function nextTeamMember() {
+            inquirer.prompt([{
+                type: "list",
+                name: "memberchoice",
+                message: "Which team member would you like to add",
+                choices: ["Engineer", "Intern", "I don't want to add any more team members"]
+            }])
+
+                .then(answer => {
+                    console.log(answer.memberChoice);
+                    if (answer.memberChoice === "Engineer") {
+                        createEngineer();
+                    }
+                    if (answer.memberChoice === "Intern") {
+                        createIntern();
+                    }
+                    if (answer.memberChoice === "I don't want anymore team members") {
+                        console.log("Ok. We'll finish up making your team.");
+                        console.log(idArray);
+                        console.log(teamMembers);
+                    }
+                })
+        }
+    }
+
+    function createEngineer() {
+        console.log("Please describe your engineer");
+        inquirer.prompt([{
+            type: "input",
+            name: "engineerName",
+            message: "What is your engineer's name?",
+            validate: answer => {
+                if (answer !== "") {
                     return true;
                 }
                 return "Please enter a name"
             }
+        },
+        {
             type: "input",
-            name: "manager id",
-            message: ""
-        }]).then(answer =>{
-            const manager = new Manager(answers.id)
-            teamMembers.push(manager)
-            //used to validate if name has already been selected 
-            idArray.push(answers.managerId)
+            name: "engineerEmail",
+            message: "What is your engineer's Email address?"
+        },
+        {
+            type: "input",
+            name: "engineergithub",
+            message: "What is your engineer's username on Github?"
+        },
+        ]).then(answer => {
+            const engineer = new Engineer(answer.engineerName, answer.engineerID, answer.engineerEmail, answer.engineergithub);
+            teamMembers.push(engineer);
+            idArray.push(answer.engineerID);
+            nextTeamMember();
         })
     }
-    
+
+    function createIntern() {
+        console.log("Please describe your intern");
+        inquirer.prompt([{
+            type: "input",
+            name: "internName",
+            message: "What's your intern's name?"
+        },
+        {
+            type: "input",
+            name: "internID",
+            message: "what is your intern's ID number?",
+            validate: async answer => {
+                if (answer <= 0) {
+                    return "Please enter a number for a intern ID.";
+                }
+                // return true
+            }
+        },
+        {
+            type: "input",
+            name: "internEmail",
+            message: "What is your intern's email address?"
+        },
+        {
+            type: "input",
+            name: "internSchool",
+            message: "What school does your intern attend?"
+        }
+        ]).then(answer => {
+            const intern = new Intern(answer.internName, answer.internID, answer.internEmail, answer.internSchool);
+            teamMembers.push(intern);
+            idArray.push(answer.internID);
+            nextTeamMember();
+        })
+    }
     createManager()
 }
 mainMenu()
