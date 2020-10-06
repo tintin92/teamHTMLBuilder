@@ -14,82 +14,96 @@ const teamMembers = [];
 const idArray = [];
 
 function mainMenu() {
+
+    createManager();
+
     function createManager() {
         console.log("Please Build Your Team")
-        inquirer.prompt([{
-            type: "input",
-            name: "managerName",
-            message: "What is your managers name?",
-            validate: answer => {
-                if (answer !== "") {
-                    return true;
-                }
-                return "Please enter a name"
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "managerName",
+                message: "What is your managers name?",
+                validate: answer => {
+                    if (answer !== "") {
+                        return true;
+                    }
+                    return "Please enter a name"
 
-            }
-        },
+                }
+            },
             {
 
-            type: "input",
-            name: "managerID",
-            message: "What is your manager's ID number?",
-            validate: async answer => {
-                if (answer !=="") {
-                    return true;
+                type: "input",
+                name: "managerId",
+                message: "What is your manager's ID?",
+                validate: answer => {
+                    //checking for a negative input by user
+                    if (parseInt(answer) >= 0) {
+                        return true;
+                    }
+                    return "Please enter a number for your manager's ID."
+                },
+            },
+            {
+                type: "input",
+                name: "managerEmail",
+                message: "What's your manager's email address?",
+                validate: answer => {
+                    if (answer !== "") {
+                        return true;
+                    }
+                    return "Enter a valid email";
+                },
+            },
+            {
+                type: "input",
+                name: "managerOffice",
+                message: "What is your manager's office number?",
+                validate: answer => {
+                    //checking for negative input by user
+                    if (parseInt(answer) >= 0) {
+                        return true;
+                    }
+                    return "Please enter a number for your manager's office."
                 }
-                return "Please enter a number for your manager's ID."
+
+            }]).then(answers => {
+                const manager = new Manager(answers.managerName, answers.managerId, answers.managerEmail, answers.managerOffice);
+                //add manager to list of employees
+                teamMembers.push(manager);
+                //used to validate if name has already been selected 
+                idArray.push(answers.managerId);
+                createTeam();
+            })
+
+    }
+
+    function createTeam() {
+        inquirer.prompt([{
+            type: "list",
+            name: "employeeClass",
+            message: "Which team member would you like to add?",
+            choices: ["Engineer", "Intern", "I don't want to add any more team members"]
+
+        }]).then(answers => {
+
+            if (answers.employeeClass === "Engineer") {
+                createEngineer();
             }
-        },
-        {
-            type: "input",
-            name: "managerEmail",
-            message: "What's your manager's email address?"
-        },
-        {
-            type: "input",
-            name: "managerOffice",
-            message: "What is your manager's office number?",
-            validate: async answer => {
-                if (answer !=="") {
-                    return true;
-                }
-                return "Please enter a number for your managers office."
+
+            else if (answers.employeeClass === "Intern") {
+                createIntern();
             }
-
-        },
-
-        ]).then(answer => {
-            const manager = new Manager(answer.managerName, answer.managerID, answer.managerEmail, answer.managerOffice);
-
-            teamMembers.push(manager);
-            //used to validate if name has already been selected 
-            idArray.push(answers.managerID);
-            nextTeamMember();
+            else {
+                const renderedHtml = render(teamMembers);
+                fs.writeFile(outputPath, renderedHtml, function (err) {
+                    if (err) throw err;
+                    console.log("Team Assemble Complete!")
+                })
+            }
         })
 
-        function nextTeamMember() {
-            inquirer.prompt([{
-                type: "list",
-                name: "memberchoice",
-                message: "Which team member would you like to add",
-                choices: ["Engineer", "Intern", "I don't want to add any more team members"]
-            }])
-
-                .then(answer => {
-                    console.log(answer.memberChoice);
-                    if (answer.memberChoice === "Engineer") {
-                        createEngineer();
-                    }
-                    if (answer.memberChoice === "Intern") {
-                        createIntern();
-                    }
-                    if (answer.memberChoice === "I don't want anymore team members") {
-                        console.log("Ok. We'll finish up making your team.");
-                        console.log(idArray);
-                        console.log(teamMembers);
-                    }
-                })
-        }
     }
 
     function createEngineer() {
@@ -98,11 +112,11 @@ function mainMenu() {
             type: "input",
             name: "engineerName",
             message: "What is your engineer's name?",
-            validate: answer => {
-                if (answer !== "") {
+            validate: answers => {
+                if (answers !== "") {
                     return true;
                 }
-                return "Please enter a name"
+                return ("Please enter a name")
             }
         },
         {
